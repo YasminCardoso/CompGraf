@@ -1,53 +1,3 @@
-def LoadTextures():
-    global texture
-    glGenTextures(2, texture)
-    texture[0] = 1
-
-    glBindTexture(GL_TEXTURE_2D, texture[0])
-    reader = png.Reader(filename='dado.png')
-    w, h, pixels, metadata = reader.read_flat()
-    if(metadata['alpha']):
-        modo = GL_RGBA
-    else:
-        modo = GL_RGB
-    glPixelStorei(GL_UNPACK_ALIGNMENT,1)
-    glTexImage2D(GL_TEXTURE_2D, 0, modo, w, h, 0, modo, GL_UNSIGNED_BYTE, pixels.tolist())
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
-
-def InitGL(Width, Height):             
-    LoadTextures()
-    glEnable(GL_TEXTURE_2D)
-    glClearColor(0.0, 0.0, 0.0, 0.0)    
-    glClearDepth(1.0)                  
-    glDepthFunc(GL_LESS)               
-    glEnable(GL_DEPTH_TEST)            
-    glShadeModel(GL_SMOOTH)            
-    
-    glMatrixMode(GL_PROJECTION)
-    gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
-
-    glMatrixMode(GL_MODELVIEW)
-
-def ReSizeGLScene(Width, Height):
-    if Height == 0:                        
-        Height = 1
-
-    glViewport(0, 0, Width, Height)      
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()
-    gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
-    glMatrixMode(GL_MODELVIEW)
-
-
-
-
-
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -195,6 +145,17 @@ def keyPressed(tecla, x, y):
         dy = 0
         dz = 3
 
+def teclaEspecialPressionada(tecla, x, y):
+    global xrot, yrot, zrot, dx, dy, dz
+    if tecla == GLUT_KEY_LEFT:
+        xrot -= dx                # X rotation
+        yrot -= dy                 # Y rotation
+        zrot -= dz                     
+    elif tecla == GLUT_KEY_RIGHT:
+        xrot += dx                # X rotation
+        yrot += dy                 # Y rotation
+        zrot += dz                     
+
 def main():
     global window
     glutInit(sys.argv)
@@ -216,6 +177,11 @@ def main():
     
     # Register the function called when our window is resized.
     glutReshapeFunc(ReSizeGLScene)
+    
+    # Register the function called when the keyboard is pressed.  
+    glutKeyboardFunc(keyPressed)
+
+    glutSpecialFunc(teclaEspecialPressionada)
 
     # Initialize our window. 
     InitGL(640, 480)
@@ -225,5 +191,5 @@ def main():
 
 # Print message to console, and kick off the main to get it rolling.
 if __name__ == "__main__":
-    print ("Hit ESC key to quit.")
+    print("Hit ESC key to quit.")
     main()

@@ -42,7 +42,7 @@ class PLY:
             glNormal3fv(calculaNormalFace(self.vertices[face[0]], self.vertices[face[1]], self.vertices[face[2]]))
             for i in range(3):
                 print(self.intensidade[face[i]])
-                glColor3f(1*self.confidence[face[i]], 0.2*self.confidence[face[i]], 0.8*self.confidence[face[i]])
+                glColor3f(1*self.confidence[face[i]], 1*self.confidence[face[i]], 1*self.confidence[face[i]])
                 glVertex3fv(self.vertices[face[i]])
         glEnd()
         glDisable(GL_TEXTURE_2D)
